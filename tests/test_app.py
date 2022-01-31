@@ -28,7 +28,7 @@ def test_app_dep_uninitialized(client: testclient.TestClient):
 
 
 def test_initialized(client: testclient.TestClient, app: FastAPI):
-    fire.setup(app)
+    fire.setup_firebase(app)
 
     with client:
         response = client.get("/")
