@@ -54,17 +54,34 @@ def _initialize_app(
     return initialize_app(**kwargs)
 
 
-def setup(
+def setup_firebase(
     app: FastAPI,
-    **kwargs: typing.Any,
+    credentials_file: str = None,
+    credentials_content: typing.Dict[str, typing.Any] = None,
+    firebase_options: typing.Dict[str, typing.Any] = None,
 ):
+    """Add a firebase app to the FastAPI app.
+
+    Args:
+        app (FastAPI): The FastAPI app to attach to
+        credentials_file (str, optional): The private certificate file to load. Defaults to None.
+        credentials_content (typing.Dict[str, typing.Any], optional): The (already decoded) private
+            key. Defaults to None.
+        firebase_options (typing.Dict[str, typing.Any], optional): Additional firebase options.
+            Defaults to None.
+    """
     _app: App = None
 
     @app.on_event("startup")
     def _setup_app():
         nonlocal _app
         try:
-            _app = _initialize_app(app_name=_app_name(app), **kwargs)
+            _app = _initialize_app(
+                app_name=_app_name(app),
+                credentials_content=credentials_content,
+                credentials_file=credentials_file,
+                firebase_options=firebase_options,
+            )
         except Exception as ex:
             log.exception(
                 "Error while trying to initialize the firebase SDK with provided args.",
