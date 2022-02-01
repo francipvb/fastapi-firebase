@@ -1,6 +1,6 @@
 import pytest
 from fastapi import Depends, FastAPI, testclient
-from firebase_admin import App, _DEFAULT_APP_NAME
+from firebase_admin import App
 
 from fastapi_firebase import app as fire
 
