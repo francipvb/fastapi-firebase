@@ -6,11 +6,12 @@ on:
 jobs:
   lint_code:
     name: Lint code
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
         with:
-          python_version:
+          python_version: 3.9
       - run: pip install poetry
       - run: poetry install
         id: deps
