@@ -13,7 +13,7 @@ jobs:
         python_version: ["3.7", "3.8", "3.9", "3.10"]
     steps:
       - uses: actions/setup-python@v2
-      - run: pip install --upgrade pip poetry
+      - run: pip install --upgrade pip poetry coveralls
       - uses: actions/checkout@v2
       - run: poetry install
       - run: poetry run pytest --cov=fastapi_firebase
