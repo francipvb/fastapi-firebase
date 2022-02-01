@@ -5,7 +5,7 @@ on:
       - "develop"
 
 jobs:
-  run_tests:
+  test:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true
@@ -18,3 +18,22 @@ jobs:
       - run: poetry install
       - run: poetry run pytest --cov=fastapi_firebase
       - run: poetry run coverage lcov
+      - name: Upload coverage data to coveralls.io
+        run: coveralls --service=github
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COVERALLS_FLAG_NAME: python${{ matrix.python_version }}
+          COVERALLS_PARALLEL: true
+
+  coveralls:
+    name: Indicate completion to coveralls.io
+    needs: test
+    runs-on: ubuntu-latest
+    container: python:3-slim
+    steps:
+      - name: Finished
+        run: |
+          pip3 install --upgrade coveralls
+          coveralls --service=github --finish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
