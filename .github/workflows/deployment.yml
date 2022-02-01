@@ -1,0 +1,12 @@
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  deploy_to_pipy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v2
+        with:
+          python_version: 3.9
