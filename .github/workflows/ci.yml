@@ -40,7 +40,6 @@ jobs:
     container:
       image: python:3-slim
     steps:
-      - run: echo ${{ github.ref }}
       - name: Finished
         run: |
           pip3 install --upgrade coveralls
@@ -71,7 +70,7 @@ jobs:
     environment: test_deployment
     needs: test
     name: Test publish to PyPI
-    if: startsWith(github.ref, 'refs/heads/')
+    if: ${{startsWith(github.ref, 'refs/heads/') || startsWith(github.ref, 'refs/pulls/')}}
     steps:
       - name: Publish to TestPyPI
         uses: JRubics/poetry-publish@v1.10
