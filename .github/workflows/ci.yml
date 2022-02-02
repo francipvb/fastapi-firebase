@@ -21,13 +21,16 @@ jobs:
       - uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python_version }}
-      - run: pip install --upgrade pip poetry coveralls
+      - run: pip install --upgrade pip poetry
       - uses: actions/checkout@v2
       - run: poetry install
       - run: poetry run pytest --cov=fastapi_firebase
       - run: poetry run coverage lcov
       - name: Upload coverage data to coveralls.io
-        run: coveralls --service=github
+        if: startsWith(github.ref, 'refs/heads/')
+        run: |
+          pip install coveralls
+          coveralls --service=github
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COVERALLS_FLAG_NAME: python${{ matrix.python_version }}
