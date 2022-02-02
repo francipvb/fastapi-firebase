@@ -70,7 +70,7 @@ jobs:
     environment: test_deployment
     needs: test
     name: Test publish to PyPI
-    if: startsWith(github.ref, 'refs/branches/')
+    if: startsWith(github.ref, 'refs/heads/')
     steps:
       - name: Publish to TestPyPI
         uses: JRubics/poetry-publish@v1.10
