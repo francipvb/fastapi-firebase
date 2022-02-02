@@ -1,0 +1,68 @@
+on:
+  pull_request:
+    branches:
+      - "main"
+      - "develop"
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        python_version: ["3.7", "3.8", "3.9", "3.10"]
+    steps:
+      - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python_version }}
+      - run: pip install --upgrade pip poetry coveralls
+      - uses: actions/checkout@v2
+      - run: poetry install
+      - run: poetry run pytest --cov=fastapi_firebase
+      - run: poetry run coverage lcov
+      - name: Upload coverage data to coveralls.io
+        run: coveralls --service=github
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COVERALLS_FLAG_NAME: python${{ matrix.python_version }}
+          COVERALLS_PARALLEL: true
+
+  coveralls:
+    name: Indicate completion to coveralls.io
+    needs: test
+    runs-on: ubuntu-latest
+    container:
+      image: python:3-slim
+    steps:
+      - name: Finished
+        run: |
+          pip3 install --upgrade coveralls
+          coveralls --service=github --finish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  deploy:
+    name: Publish package
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - uses: actions/checkout@v2
+      - run: pip install --upgrade pip poetry
+        name: Install dependencies
+      - run: poetry build
+        name: Build package
+      - run: poetry publish
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          PYPI_USERNAME: __token__
+          PYPI_PASSWORD: ${{ secrets.PYPI_TOKEN }}
+      - uses: softprops/action-gh-release@v0.1.14
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: dist/*
