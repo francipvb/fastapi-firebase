@@ -37,6 +37,7 @@ jobs:
     name: Indicate completion to coveralls.io
     needs: test
     runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/heads/')
     container:
       image: python:3-slim
     steps:
