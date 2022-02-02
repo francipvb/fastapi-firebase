@@ -70,33 +70,20 @@ jobs:
           files: dist/*
 
   test_publish_to_pypi:
-    runs-on: ubuntu-latest
     environment: test_deployment
     needs: test
     name: Test publish to PyPI
     if: startsWith(github.ref, 'refs/heads/')
-    steps:
-      - uses: actions/checkout@v2
-      - name: Publish to TestPyPI
-        uses: JRubics/poetry-publish@v1.10
-        with:
-          repository_name: testpypi
-          repository_url: ${{ secrets.PYPI_REPOSITORY }}
-          repository_username: __token__
-          repository_password: ${{ secrets.pypi_token }}
+    uses: "./.github/workflows/publish.yml"
+    with:
+      token: ${{ secrets.pypi_token }}
+      url: ${{ secrets.pypi_url }}
 
   publish_to_pypi:
-    runs-on: ubuntu-latest
     environment: Production
     needs: test
-    name: Publish to PyPI
     if: startsWith(github.ref, 'refs/tags/')
-    steps:
-      - uses: actions/checkout@v2
-      - name: Publish to PyPI
-        uses: JRubics/poetry-publish@v1.10
-        with:
-          repository_name: testpypi
-          repository_url: ${{ secrets.PYPI_REPOSITORY }}
-          repository_username: __token__
-          repository_password: ${{ secrets.pypi_token }}
+    uses: "./.github/workflows/publish.yml"
+    with:
+      token: ${{ secrets.pypi_token }}
+      url: ${{ secrets.pypi_url }}
