@@ -3,7 +3,10 @@ on:
     branches:
       - "main"
       - "develop"
+
   push:
+    branches:
+      - "develop"
     tags:
       - "v*"
 
@@ -44,8 +47,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  deploy:
-    name: Publish package
+  publish_github:
+    name: Publish to github
     needs: test
     runs-on: ubuntu-latest
     steps:
@@ -55,14 +58,37 @@ jobs:
       - uses: actions/checkout@v2
       - run: pip install --upgrade pip poetry
         name: Install dependencies
+      - run: poetry install
       - run: poetry build
-        name: Build package
-      - run: poetry publish
-        if: startsWith(github.ref, 'refs/tags/')
-        env:
-          PYPI_USERNAME: __token__
-          PYPI_PASSWORD: ${{ secrets.PYPI_TOKEN }}
       - uses: softprops/action-gh-release@v0.1.14
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: dist/*
+
+  test_publish_to_pypi:
+    runs-on: ubuntu-latest
+    environment: test_deployment
+    needs: test
+    name: Test publish to PyPI
+    if: startsWith(github.ref, 'refs/branches/')
+    steps:
+      - name: Publish to TestPyPI
+        uses: JRubics/poetry-publish@v1.10
+        with:
+          repository_name: testpypi
+          repository_url: ${{ secrets.PYPI_REPOSITORY }}
+          pypi_token: ${{ secrets.pypi_token }}
+
+  publish_to_pypi:
+    runs-on: ubuntu-latest
+    environment: Production
+    needs: test
+    name: Publish to PyPI
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - name: Publish to PyPI
+        uses: JRubics/poetry-publish@v1.10
+        with:
+          repository_name: testpypi
+          repository_url: ${{ secrets.PYPI_REPOSITORY }}
+          pypi_token: ${{ secrets.pypi_token }}
