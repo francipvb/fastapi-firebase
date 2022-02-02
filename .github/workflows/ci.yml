@@ -40,6 +40,7 @@ jobs:
     container:
       image: python:3-slim
     steps:
+      - run: echo ${{ github.ref }}
       - name: Finished
         run: |
           pip3 install --upgrade coveralls
