@@ -13,6 +13,8 @@ jobs:
         python_version: ["3.7", "3.8", "3.9", "3.10"]
     steps:
       - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python_version }}
       - run: pip install --upgrade pip poetry coveralls
       - uses: actions/checkout@v2
       - run: poetry install
@@ -29,7 +31,8 @@ jobs:
     name: Indicate completion to coveralls.io
     needs: test
     runs-on: ubuntu-latest
-    container: python:3-slim
+    container:
+      image: python:3-slim
     steps:
       - name: Finished
         run: |
