@@ -79,6 +79,7 @@ jobs:
       - uses: actions/setup-python@v2
         with:
           python-version: 3.9
+      - run: pip install --upgrade pip poetry==1.1.12
       - uses: actions/checkout@v2
       - run: bash ./.github/scripts/publish.sh
         env:
@@ -92,7 +93,9 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/')
     steps:
       - uses: actions/setup-python@v2
-      - run: pip install --upgrade pip poetry
+        with:
+          python-version: 3.9
+      - run: pip install --upgrade pip poetry==1.1.12
       - uses: actions/checkout@v2
       - run: bash ./.github/scripts/publish.sh
         env:
