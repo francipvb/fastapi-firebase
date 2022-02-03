@@ -68,7 +68,7 @@ def test_setup_raises_invalid_credentials(
 
 
 @mock.patch("fastapi_firebase.app.initialize_app")
-def test_failed_initialize(initialize: mock.Mock, app: app, client: testclient.TestClient):
+def test_failed_initialize(initialize: mock.Mock, app: FastAPI, client: testclient.TestClient):
     initialize.side_effect = ValueError
     fire.setup_firebase(app)
 
