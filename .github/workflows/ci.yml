@@ -74,16 +74,27 @@ jobs:
     needs: test
     name: Test publish to PyPI
     if: startsWith(github.ref, 'refs/heads/')
-    uses: "./.github/workflows/publish.yml"
-    with:
-      token: ${{ secrets.pypi_token }}
-      url: ${{ secrets.pypi_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - uses: actions/checkout@v2
+      - run: bash ./.github/scripts/publish.sh
+        env:
+          PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
+          REPO_URL: ${{ secrets.pypi_repository }}
 
   publish_to_pypi:
     environment: Production
     needs: test
+    runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
-    uses: "./.github/workflows/publish.yml"
-    with:
-      token: ${{ secrets.pypi_token }}
-      url: ${{ secrets.pypi_url }}
+    steps:
+      - uses: actions/setup-python@v2
+      - run: pip install --upgrade pip poetry
+      - uses: actions/checkout@v2
+      - run: bash ./.github/scripts/publish.sh
+        env:
+          PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
+          REPO_URL: ${{ secrets.PYPI_REPOSITORY }}
