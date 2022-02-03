@@ -78,7 +78,7 @@ def test_failed_initialize(initialize: mock.Mock, app: FastAPI, client: testclie
 
 
 @mock.patch("fastapi_firebase.app.delete_app")
-def test_failed_delete(delete: mock.Mock, app: app, client: testclient.TestClient):
+def test_failed_delete(delete: mock.Mock, app: FastAPI, client: testclient.TestClient):
     delete.side_effect = ValueError()
     fire.setup_firebase(app)
 
