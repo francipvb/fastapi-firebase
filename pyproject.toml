@@ -41,7 +41,7 @@ line-length = 100
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
-addopts = "-ra -q"
+addopts = "-ra -q --cov=fastapi_firebase"
 minversion = "6.0"
 testpaths = [
   "tests",

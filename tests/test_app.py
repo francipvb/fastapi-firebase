@@ -1,6 +1,9 @@
+import typing
+from unittest import mock
+
+import firebase_admin
 import pytest
 from fastapi import Depends, FastAPI, testclient
-from firebase_admin import App
 
 from fastapi_firebase import app as fire
 
@@ -10,7 +13,7 @@ def app():
     _app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 
     @_app.get("/")
-    def read_app(app: App = Depends(fire.firebase_app)):
+    def read_app(app: firebase_admin.App = Depends(fire.firebase_app)):
         return app.name
 
     return _app
@@ -34,3 +37,31 @@ def test_initialized(client: testclient.TestClient, app: FastAPI):
         response = client.get("/")
 
     assert response.json() == fire._app_name(app)
+
+
+@pytest.mark.parametrize("credential_data", ("./cert.json", {"test": "hello"}))
+@mock.patch("firebase_admin.credentials.Certificate")
+def test_setup_succeeds(certificate, app: FastAPI, client: testclient.TestClient, credential_data):
+    fire.setup_firebase(app, credential_data)
+    certificate.assert_called_with(credential_data)
+
+
+@pytest.mark.parametrize(
+    "credential_data,exc_class,raised_exc,",
+    (
+        ("./cert.json", IOError, fire.CredentialsNotLoadedError),
+        ({"test": "hello"}, ValueError, fire.InvalidCredentialsError),
+    ),
+)
+@mock.patch("firebase_admin.credentials.Certificate")
+def test_setup_raises_invalid_credentials(
+    certificate: mock.Mock,
+    app: FastAPI,
+    client: testclient.TestClient,
+    credential_data,
+    exc_class: typing.Type[Exception],
+    raised_exc: typing.Type[Exception],
+):
+    certificate.side_effect = exc_class
+    with pytest.raises(raised_exc):
+        fire.setup_firebase(app, credential_data)
