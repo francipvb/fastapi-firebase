@@ -39,3 +39,10 @@ line-length = 100
 
 [tool.mypy]
 ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+addopts = "-ra -q --cov=fastapi_firebase"
+minversion = "6.0"
+testpaths = [
+  "tests",
+]
