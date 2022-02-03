@@ -65,3 +65,28 @@ def test_setup_raises_invalid_credentials(
     certificate.side_effect = exc_class
     with pytest.raises(raised_exc):
         fire.setup_firebase(app, credential_data)
+
+
+@mock.patch("fastapi_firebase.app.initialize_app")
+def test_failed_initialize(initialize: mock.Mock, app: app, client: testclient.TestClient):
+    initialize.side_effect = ValueError
+    fire.setup_firebase(app)
+
+    with pytest.raises(ValueError):
+        with client:
+            initialize.assert_called()
+
+
+@mock.patch("fastapi_firebase.app.delete_app")
+def test_failed_delete(delete: mock.Mock, app: app, client: testclient.TestClient):
+    delete.side_effect = ValueError()
+    fire.setup_firebase(app)
+
+    with pytest.raises(ValueError):
+        with client:
+            delete.assert_not_called()
+
+
+def test_not_initialized():
+    with pytest.raises(fire.NotInitializedError):
+        fire.firebase_app()
