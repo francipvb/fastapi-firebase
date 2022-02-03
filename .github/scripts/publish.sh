@@ -4,5 +4,5 @@ poetry config repositories.destrepo "${REPO_URL}"
 poetry config pypi-token.destrepo "${PYPI_TOKEN}"
 
 poetry publish \
-    --build |
+    --build \
     --repository "destrepo"
