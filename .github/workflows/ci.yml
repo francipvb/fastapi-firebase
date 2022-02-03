@@ -83,7 +83,7 @@ jobs:
       - uses: actions/checkout@v2
       - run: bash ./.github/scripts/publish.sh
         env:
-          PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
+          PYPI_TOKEN: ${{ secrets.pipy_token }}
           REPO_URL: ${{ secrets.pypi_repository }}
 
   publish_to_pypi:
