@@ -62,6 +62,7 @@ def setup_firebase(
             _app = None
         except Exception as ex:
             log.exception("Error while deleting the firebase app.", exc_info=ex)
+            raise
 
 
 def firebase_app():
