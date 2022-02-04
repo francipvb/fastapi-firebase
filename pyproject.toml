@@ -25,6 +25,8 @@ mypy = "^0.931"
 pre-commit = "^2.17.0"
 pytest = "^6.2.5"
 pytest-cov = "^3.0.0"
+uvicorn = {extras = ["standard"], version = "^0.17.3"}
+aiofiles = "^0.8.0"
 
 [build-system]
 build-backend = "poetry.core.masonry.api"
