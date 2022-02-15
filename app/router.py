@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends
 import typing
-from fastapi_firebase.auth import validated_token
+from fastapi_firebase.auth import validate_token
 
 router = APIRouter()
 
 
 @router.get("/current-token")
-def validate_token(data: typing.Dict[str, typing.Any] = Depends(validated_token)):
+def current_token(data: typing.Dict[str, typing.Any] = Depends(validate_token)):
     return data

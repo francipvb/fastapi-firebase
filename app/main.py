@@ -1,18 +1,5 @@
-from pathlib import Path
-
-from fastapi import FastAPI, status
+from fastapi import FastAPI
 from fastapi.middleware import cors
-from fastapi.staticfiles import StaticFiles
-
-
-class SPAStaticFiles(StaticFiles):
-    async def get_response(self, path: str, scope):
-        response = await super().get_response(path, scope)
-
-        if response.status_code == status.HTTP_404_NOT_FOUND:
-            response = await super().get_response(".", scope)
-
-        return response
 
 
 def get_app():
@@ -31,17 +18,9 @@ def get_app():
         allow_credentials=True,
         expose_headers=["*"],
     )
-    setup_firebase(app)
+    setup_firebase(app, "./.vscode/firebase.json")
 
     app.include_router(router, prefix="/firebase")
-    app.mount(
-        "/",
-        SPAStaticFiles(
-            directory=Path(__file__).parent.resolve() / "fbtoken-util" / "dist",
-            html=True,
-            check_dir=True,
-        ),
-    )
 
     return app
 
