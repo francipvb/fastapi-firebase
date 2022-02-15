@@ -5,10 +5,11 @@ authors = [
 description = "FastAPI integration with firebase"
 exclude = [
   "tests/",
+  "app/",
 ]
 name = "fastapi-firebase"
 readme = "README.md"
-version = "0.1.1a1"
+version = "0.2.0"
 
 [tool.poetry.dependencies]
 fastapi = "^0.60.0"
