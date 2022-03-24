@@ -1,9 +1,10 @@
 import datetime
+from typing import Optional
 import pydantic
 
 
 class TokenData(pydantic.BaseModel):
-    provider_id: str
+    provider_id: Optional[str] = None
     issuer: pydantic.HttpUrl = pydantic.Field(..., alias="iss")
     audience: str = pydantic.Field(..., alias="aud")
     auth_time: datetime.datetime
