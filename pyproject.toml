@@ -9,7 +9,7 @@ exclude = [
 ]
 name = "fastapi-firebase"
 readme = "README.md"
-version = "0.2.3"
+version = "0.3.0"
 
 [tool.poetry.dependencies]
 fastapi = ">0.60.0<1.0.0"
